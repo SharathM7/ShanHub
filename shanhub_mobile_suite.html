@@ -1,0 +1,1699 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ShanHub - Modern Productivity Workspace & WhatsApp Suite</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                        }
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0', transform: 'translateY(6px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' }
+                        },
+                        popIn: {
+                            '0%': { transform: 'scale(0.96)', opacity: '0' },
+                            '100%': { transform: 'scale(1)', opacity: '1' }
+                        },
+                        bounceSubtle: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-4px)' }
+                        }
+                    },
+                    animation: {
+                        fadeIn: 'fadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+                        popIn: 'popIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+                        bounceSubtle: 'bounceSubtle 2s infinite'
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+        ::-webkit-scrollbar {
+            width: 4px;
+            height: 4px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #94a3b840;
+            border-radius: 9999px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b880;
+        }
+        .glass-panel {
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+        /* Mobile horizontal scroll touch optimization */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 min-h-screen transition-colors duration-300 flex flex-col antialiased">
+
+    <!-- Top Header Navigation Bar -->
+    <header class="sticky top-0 z-30 border-b border-slate-200/80 dark:border-slate-800/80 bg-white/80 dark:bg-slate-900/80 glass-panel shadow-sm">
+        <div class="max-w-6xl mx-auto px-3 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-14 sm:h-16">
+                
+                <!-- Logo with custom 'S' Badge -->
+                <div class="flex items-center space-x-2.5 sm:space-x-3">
+                    <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-purple-500 text-white shadow-md shadow-blue-500/20 flex items-center justify-center font-extrabold text-base tracking-wider flex-shrink-0">
+                        SN
+                    </div>
+                    <div>
+                        <h1 class="font-bold text-base sm:text-lg leading-none tracking-tight text-slate-900 dark:text-white">ShanHub</h1>
+                        <p class="text-[10px] sm:text-[11px] text-slate-500 dark:text-slate-400 font-medium mt-0.5">Sharath's Workspace & WhatsApp Suite</p>
+                    </div>
+                </div>
+
+                <!-- Desktop Navigation Tabs -->
+                <nav class="hidden md:flex space-x-1 p-1 bg-slate-100 dark:bg-slate-800/60 rounded-2xl border border-slate-200/50 dark:border-slate-700/50">
+                    <button onclick="switchTab('work')" id="tab-btn-work" class="tab-btn flex items-center space-x-2 px-4 py-2 text-xs font-bold rounded-xl transition-all duration-200 bg-white dark:bg-slate-700 text-blue-600 dark:text-white shadow-sm">
+                        <i data-lucide="briefcase" class="w-4 h-4"></i>
+                        <span>Work</span>
+                        <span id="work-badge" class="ml-1 px-1.5 py-0.5 text-[10px] rounded-full bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300 hidden">0</span>
+                    </button>
+                    <button onclick="switchTab('list')" id="tab-btn-list" class="tab-btn flex items-center space-x-2 px-4 py-2 text-xs font-bold rounded-xl transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100">
+                        <i data-lucide="shopping-bag" class="w-4 h-4"></i>
+                        <span>List</span>
+                        <span id="list-badge" class="ml-1 px-1.5 py-0.5 text-[10px] rounded-full bg-purple-100 text-purple-700 dark:bg-purple-900/50 dark:text-purple-300 hidden">0</span>
+                    </button>
+                    <button onclick="switchTab('money')" id="tab-btn-money" class="tab-btn flex items-center space-x-2 px-4 py-2 text-xs font-bold rounded-xl transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100">
+                        <i data-lucide="wallet" class="w-4 h-4"></i>
+                        <span>Money</span>
+                    </button>
+                    <button onclick="switchTab('spending')" id="tab-btn-spending" class="tab-btn flex items-center space-x-2 px-4 py-2 text-xs font-bold rounded-xl transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100">
+                        <i data-lucide="pie-chart" class="w-4 h-4"></i>
+                        <span>Spending</span>
+                    </button>
+                    <button onclick="switchTab('reminder')" id="tab-btn-reminder" class="tab-btn flex items-center space-x-2 px-4 py-2 text-xs font-bold rounded-xl transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100">
+                        <i data-lucide="bell" class="w-4 h-4"></i>
+                        <span>Reminder</span>
+                        <span id="reminder-badge" class="ml-1 px-1.5 py-0.5 text-[10px] rounded-full bg-amber-100 text-amber-700 dark:bg-amber-900/50 dark:text-amber-300 hidden">0</span>
+                    </button>
+                </nav>
+
+                <!-- Actions / Dark Theme Toggle -->
+                <div class="flex items-center space-x-2 sm:space-x-3">
+                    <button id="theme-toggle" class="p-2 sm:p-2.5 text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors active:scale-95">
+                        <i data-lucide="moon" class="w-5 h-5 hidden dark:block"></i>
+                        <i data-lucide="sun" class="w-5 h-5 block dark:hidden"></i>
+                    </button>
+                </div>
+
+            </div>
+
+            <!-- Mobile Touch-friendly Navigation Bar Tabs -->
+            <div class="flex md:hidden overflow-x-auto py-2 space-x-1.5 border-t border-slate-200/50 dark:border-slate-800/50 no-scrollbar touch-pan-x">
+                <button onclick="switchTab('work')" id="mob-tab-btn-work" class="mob-tab-btn px-3 py-1.5 text-xs font-bold rounded-xl bg-blue-600 text-white whitespace-nowrap flex items-center space-x-1.5">
+                    <i data-lucide="briefcase" class="w-3.5 h-3.5"></i>
+                    <span>Work</span>
+                </button>
+                <button onclick="switchTab('list')" id="mob-tab-btn-list" class="mob-tab-btn px-3 py-1.5 text-xs font-bold rounded-xl text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 whitespace-nowrap flex items-center space-x-1.5">
+                    <i data-lucide="shopping-bag" class="w-3.5 h-3.5"></i>
+                    <span>List</span>
+                </button>
+                <button onclick="switchTab('money')" id="mob-tab-btn-money" class="mob-tab-btn px-3 py-1.5 text-xs font-bold rounded-xl text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 whitespace-nowrap flex items-center space-x-1.5">
+                    <i data-lucide="wallet" class="w-3.5 h-3.5"></i>
+                    <span>Money</span>
+                </button>
+                <button onclick="switchTab('spending')" id="mob-tab-btn-spending" class="mob-tab-btn px-3 py-1.5 text-xs font-bold rounded-xl text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 whitespace-nowrap flex items-center space-x-1.5">
+                    <i data-lucide="pie-chart" class="w-3.5 h-3.5"></i>
+                    <span>Spending</span>
+                </button>
+                <button onclick="switchTab('reminder')" id="mob-tab-btn-reminder" class="mob-tab-btn px-3 py-1.5 text-xs font-bold rounded-xl text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 whitespace-nowrap flex items-center space-x-1.5">
+                    <i data-lucide="bell" class="w-3.5 h-3.5"></i>
+                    <span>Reminder</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Body -->
+    <main class="flex-1 max-w-5xl w-full mx-auto px-3 sm:px-6 py-4 sm:py-8">
+
+        <!-- ================= 1. WORK TAB SECTION ================= -->
+        <section id="tab-content-work" class="tab-pane space-y-5 sm:space-y-8 animate-fadeIn">
+            
+            <!-- Quick Stats Summary -->
+            <div class="grid grid-cols-3 gap-2 sm:gap-4">
+                <div class="p-3 sm:p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-sm flex flex-col items-center justify-center text-center">
+                    <span class="text-[11px] sm:text-xs font-semibold text-slate-500 dark:text-slate-400">Total Tasks</span>
+                    <span id="stat-total-count" class="text-xl sm:text-2xl font-extrabold text-slate-800 dark:text-slate-100 mt-0.5 sm:mt-1">0</span>
+                </div>
+                <div class="p-3 sm:p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-sm flex flex-col items-center justify-center text-center">
+                    <span class="text-[11px] sm:text-xs font-semibold text-amber-600 dark:text-amber-400">Active</span>
+                    <span id="stat-active-count" class="text-xl sm:text-2xl font-extrabold text-amber-600 dark:text-amber-400 mt-0.5 sm:mt-1">0</span>
+                </div>
+                <div class="p-3 sm:p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-sm flex flex-col items-center justify-center text-center">
+                    <span class="text-[11px] sm:text-xs font-semibold text-emerald-600 dark:text-emerald-400">Completed</span>
+                    <span id="stat-completed-count" class="text-xl sm:text-2xl font-extrabold text-emerald-600 dark:text-emerald-400 mt-0.5 sm:mt-1">0</span>
+                </div>
+            </div>
+
+            <!-- Task Input Bar -->
+            <form onsubmit="handleQuickTaskAdd(event)" class="relative flex items-center shadow-lg shadow-blue-500/5 rounded-2xl overflow-hidden bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 focus-within:ring-2 focus-within:ring-blue-500 transition-all p-1.5">
+                <i data-lucide="plus-circle" class="w-5 h-5 text-slate-400 ml-2.5 sm:ml-3.5 flex-shrink-0"></i>
+                <input type="text" id="quick-task-input" placeholder="Add a work task one by one..." required
+                       class="w-full px-2.5 sm:px-3 py-2 text-xs sm:text-sm bg-transparent focus:outline-none text-slate-800 dark:text-slate-100 placeholder-slate-400 font-medium">
+                <button type="submit" class="px-3.5 sm:px-5 py-2 sm:py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs rounded-xl shadow-md transition-all duration-200 active:scale-95 flex items-center space-x-1 flex-shrink-0">
+                    <span class="hidden sm:inline">Add Task</span>
+                    <span class="sm:hidden">Add</span>
+                    <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+                </button>
+            </form>
+
+            <!-- Active Tasks Section -->
+            <div class="space-y-3">
+                <div class="flex items-center justify-between px-1">
+                    <div class="flex items-center space-x-2">
+                        <span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
+                        <h3 class="text-xs font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wider">Active Tasks</h3>
+                        <span id="active-tasks-badge" class="px-2 py-0.5 text-xs font-semibold rounded-full bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300">0</span>
+                    </div>
+                </div>
+
+                <div id="active-tasks-container" class="space-y-2.5"></div>
+
+                <div id="active-empty-state" class="hidden flex-col items-center justify-center py-8 sm:py-10 text-center rounded-2xl border border-dashed border-slate-200 dark:border-slate-800 bg-white/50 dark:bg-slate-900/40">
+                    <i data-lucide="sparkles" class="w-6 h-6 text-slate-400 mb-2"></i>
+                    <p class="text-xs font-medium text-slate-500 dark:text-slate-400">All active tasks completed! Add new work tasks above.</p>
+                </div>
+            </div>
+
+            <!-- Completed Tasks Section -->
+            <div class="space-y-3 pt-4 border-t border-slate-200/80 dark:border-slate-800/80">
+                <div class="flex items-center justify-between px-1">
+                    <div class="flex items-center space-x-2">
+                        <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+                        <h3 class="text-xs font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wider">Completed Tasks</h3>
+                        <span id="completed-tasks-badge" class="px-2 py-0.5 text-xs font-semibold rounded-full bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300">0</span>
+                    </div>
+                    <button id="clear-completed-btn" onclick="clearAllCompleted()" class="hidden text-xs font-semibold text-rose-500 hover:text-rose-600 dark:text-rose-400 transition-colors">
+                        Clear Completed
+                    </button>
+                </div>
+
+                <div id="completed-tasks-container" class="space-y-2.5"></div>
+
+                <div id="completed-empty-state" class="hidden flex-col items-center justify-center py-6 sm:py-8 text-center rounded-2xl border border-dashed border-slate-200 dark:border-slate-800 bg-white/30 dark:bg-slate-900/20">
+                    <p class="text-xs font-medium text-slate-400 dark:text-slate-500">No completed tasks yet.</p>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- ================= 2. LIST TAB SECTION ================= -->
+        <section id="tab-content-list" class="tab-pane hidden space-y-5 sm:space-y-8 animate-fadeIn">
+            
+            <div class="grid grid-cols-2 gap-2.5 sm:gap-4">
+                <div class="p-3.5 sm:p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-sm flex flex-col items-center justify-center text-center">
+                    <span class="text-[11px] sm:text-xs font-semibold text-slate-500 dark:text-slate-400">Total Items</span>
+                    <span id="list-stat-total-count" class="text-xl sm:text-2xl font-extrabold text-slate-800 dark:text-slate-100 mt-0.5 sm:mt-1">0</span>
+                </div>
+                <div class="p-3.5 sm:p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-sm flex flex-col items-center justify-center text-center">
+                    <span class="text-[11px] sm:text-xs font-semibold text-purple-600 dark:text-purple-400">Checked Off</span>
+                    <span id="list-stat-checked-count" class="text-xl sm:text-2xl font-extrabold text-purple-600 dark:text-purple-400 mt-0.5 sm:mt-1">0</span>
+                </div>
+            </div>
+
+            <form onsubmit="handleQuickListItemAdd(event)" class="relative flex items-center shadow-lg shadow-purple-500/5 rounded-2xl overflow-hidden bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 focus-within:ring-2 focus-within:ring-purple-500 transition-all p-1.5">
+                <i data-lucide="shopping-bag" class="w-5 h-5 text-purple-400 ml-2.5 sm:ml-3.5 flex-shrink-0"></i>
+                <input type="text" id="quick-list-input" placeholder="Add grocery or list items one by one..." required
+                       class="w-full px-2.5 sm:px-3 py-2 text-xs sm:text-sm bg-transparent focus:outline-none text-slate-800 dark:text-slate-100 placeholder-slate-400 font-medium">
+                <button type="submit" class="px-3.5 sm:px-5 py-2 sm:py-2.5 bg-purple-600 hover:bg-purple-700 text-white font-semibold text-xs rounded-xl shadow-md transition-all duration-200 active:scale-95 flex items-center space-x-1 flex-shrink-0">
+                    <span class="hidden sm:inline">Add Item</span>
+                    <span class="sm:hidden">Add</span>
+                    <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+                </button>
+            </form>
+
+            <div class="space-y-3">
+                <div class="flex items-center justify-between px-1">
+                    <div class="flex items-center space-x-2">
+                        <span class="w-2.5 h-2.5 rounded-full bg-purple-500"></span>
+                        <h3 class="text-xs font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wider">Grocery / Shopping List</h3>
+                        <span id="unified-list-badge" class="px-2 py-0.5 text-xs font-semibold rounded-full bg-purple-100 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300">0</span>
+                    </div>
+                    
+                    <div class="flex items-center space-x-2 sm:space-x-3">
+                        <button id="clear-checked-list-btn" onclick="clearCheckedListItems()" class="hidden text-xs font-semibold text-purple-600 dark:text-purple-400 hover:underline">
+                            Clear Checked
+                        </button>
+                        <button id="clear-all-list-btn" onclick="clearAllListItems()" class="hidden text-xs font-semibold text-rose-500 hover:text-rose-600 dark:text-rose-400 transition-colors">
+                            Clear All
+                        </button>
+                    </div>
+                </div>
+
+                <div id="unified-list-container" class="space-y-2.5"></div>
+
+                <div id="list-empty-state" class="hidden flex-col items-center justify-center py-8 sm:py-10 text-center rounded-2xl border border-dashed border-slate-200 dark:border-slate-800 bg-white/50 dark:bg-slate-900/40">
+                    <i data-lucide="shopping-cart" class="w-6 h-6 text-slate-400 mb-2"></i>
+                    <p class="text-xs font-medium text-slate-500 dark:text-slate-400">Your list is empty. Add grocery or shopping items above.</p>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- ================= 3. MONEY TAB SECTION ================= -->
+        <section id="tab-content-money" class="tab-pane hidden space-y-5 sm:space-y-8 animate-fadeIn">
+            
+            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4 p-4 sm:p-5 rounded-2xl sm:rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-sm">
+                <div>
+                    <h2 class="text-sm sm:text-base font-bold text-slate-800 dark:text-slate-100">Money Targets & Allocations</h2>
+                    <p class="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400 mt-0.5">Set target budgets for petrol, groceries, shopping for particular months or years</p>
+                </div>
+
+                <div class="flex items-center space-x-2 w-full sm:w-auto justify-between sm:justify-start">
+                    <!-- Timeframe Selector -->
+                    <select id="money-timeframe-filter" onchange="renderMoneyTargets()" 
+                            class="px-2.5 py-2 text-xs font-semibold bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-800 dark:text-slate-200">
+                        <option value="current_month">Current Month (Sep 2026)</option>
+                        <option value="yearly">Yearly (2026)</option>
+                        <option value="all">All Targets</option>
+                    </select>
+
+                    <button onclick="openTargetModal()" class="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs rounded-xl shadow-md flex items-center space-x-1 flex-shrink-0">
+                        <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+                        <span>New Target</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Target Category Cards Grid -->
+            <div id="money-targets-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+                <!-- Target cards rendered dynamically -->
+            </div>
+
+            <div id="money-empty-state" class="hidden flex-col items-center justify-center py-10 text-center rounded-3xl border border-dashed border-slate-200 dark:border-slate-800 bg-white/50 dark:bg-slate-900/40">
+                <i data-lucide="wallet" class="w-8 h-8 text-slate-400 mb-2"></i>
+                <p class="text-xs font-semibold text-slate-500 dark:text-slate-400">No budget targets set for this period.</p>
+                <button onclick="openTargetModal()" class="mt-3 px-4 py-2 text-xs font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 rounded-xl">Create Target Now</button>
+            </div>
+
+        </section>
+
+        <!-- ================= 4. SPENDING TAB SECTION ================= -->
+        <section id="tab-content-spending" class="tab-pane hidden space-y-5 sm:space-y-8 animate-fadeIn">
+            
+            <!-- Calendar Navigation Header -->
+            <div class="p-4 sm:p-5 rounded-2xl sm:rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4">
+                <div class="flex items-center space-x-3 w-full sm:w-auto">
+                    <div class="p-2 sm:p-2.5 rounded-xl bg-indigo-100 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400">
+                        <i data-lucide="calendar" class="w-4 h-4 sm:w-5 sm:h-5"></i>
+                    </div>
+                    <div>
+                        <h2 id="calendar-month-year-display" class="text-sm sm:text-base font-bold text-slate-800 dark:text-slate-100">September 2026</h2>
+                        <p class="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400">Click any date to inspect or log daily expenses</p>
+                    </div>
+                </div>
+
+                <div class="flex items-center space-x-2 self-end sm:self-auto">
+                    <button onclick="changeSpendingMonth(-1)" class="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
+                        <i data-lucide="chevron-left" class="w-4 h-4"></i>
+                    </button>
+                    <button onclick="goToCurrentSpendingMonth()" class="px-3 py-1.5 text-xs font-semibold rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700">Today</button>
+                    <button onclick="changeSpendingMonth(1)" class="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
+                        <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Calendar View Grid & Daily Log Box -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6">
+                
+                <!-- Calendar Grid Container (7 Cols) -->
+                <div class="lg:col-span-7 p-3.5 sm:p-5 rounded-2xl sm:rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-sm space-y-3 sm:space-y-4">
+                    <div class="grid grid-cols-7 text-center text-[10px] sm:text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider border-b border-slate-100 dark:border-slate-800/80 pb-2">
+                        <span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span>
+                    </div>
+                    <div id="spending-calendar-days" class="grid grid-cols-7 gap-1 sm:gap-1.5 text-center">
+                        <!-- Calendar Days dynamically injected here -->
+                    </div>
+                </div>
+
+                <!-- Selected Date Expense Logger & List -->
+                <div class="lg:col-span-5 p-4 sm:p-5 rounded-2xl sm:rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-sm flex flex-col space-y-3.5">
+                    <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-2.5">
+                        <div class="flex items-center space-x-2">
+                            <i data-lucide="clock" class="w-4 h-4 text-indigo-500"></i>
+                            <h3 id="selected-date-heading" class="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-200">Date: Sep 30, 2026</h3>
+                        </div>
+                        <span id="selected-date-total-badge" class="px-2.5 py-0.5 text-xs font-bold rounded-full bg-indigo-100 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300">₹0</span>
+                    </div>
+
+                    <!-- Add Expense Form -->
+                    <form onsubmit="handleAddExpenseSubmit(event)" class="space-y-2.5">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                            <input type="number" id="expense-amount" placeholder="Amount (₹)" required min="1" step="any"
+                                   class="px-3 py-2 text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 text-slate-800 dark:text-slate-200">
+                            
+                            <!-- Dynamic Category Dropdown populated from Money Targets -->
+                            <select id="expense-category-select" required
+                                    class="px-3 py-2 text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 text-slate-800 dark:text-slate-200">
+                                <!-- Populated dynamically -->
+                            </select>
+                        </div>
+
+                        <div class="flex space-x-2">
+                            <input type="text" id="expense-note" placeholder="Expense description (e.g. Milk, Petrol)" required
+                                   class="w-full px-3 py-2 text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 text-slate-800 dark:text-slate-200">
+                            <button type="submit" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs rounded-xl shadow-md flex items-center space-x-1 flex-shrink-0">
+                                <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+                                <span>Add</span>
+                            </button>
+                        </div>
+                    </form>
+
+                    <!-- Daily Expense Item List -->
+                    <div id="selected-date-expense-list" class="flex-1 space-y-2 overflow-y-auto max-h-48 sm:max-h-56 pr-1">
+                        <!-- Expenses for selected date rendered here -->
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Bottom Summary Section: Targets Remaining & Other Spending -->
+            <div class="space-y-3">
+                <div class="flex items-center justify-between px-1">
+                    <h3 class="text-xs font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wider">Monthly Budget & Category Balances</h3>
+                    <span class="text-[10px] sm:text-xs text-slate-500 dark:text-slate-400">Live linked from Money section</span>
+                </div>
+
+                <div id="spending-targets-summary-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+                    <!-- Target Remaining Cards & Other Category Card rendered here -->
+                </div>
+            </div>
+
+        </section>
+
+        <!-- ================= 5. REMINDER TAB SECTION ================= -->
+        <section id="tab-content-reminder" class="tab-pane hidden space-y-5 sm:space-y-8 animate-fadeIn">
+            
+            <!-- Reminder Input Form Header -->
+            <div class="p-4 sm:p-5 rounded-2xl sm:rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-sm space-y-3.5">
+                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2.5">
+                    <div class="flex items-center space-x-2.5">
+                        <div class="p-2 sm:p-2.5 rounded-xl bg-amber-100 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400">
+                            <i data-lucide="bell" class="w-4 h-4 sm:w-5 sm:h-5"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-sm sm:text-base font-bold text-slate-800 dark:text-slate-100">Set New Reminder</h2>
+                            <p class="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400">Directly alerts your WhatsApp number (<span class="font-bold text-emerald-600 dark:text-emerald-400">+91 7760571602</span>)</p>
+                        </div>
+                    </div>
+                    <button onclick="requestNotificationPermission()" class="px-3 py-1.5 text-xs font-semibold rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center space-x-1.5 self-end sm:self-auto">
+                        <i data-lucide="bell-ring" class="w-3.5 h-3.5 text-amber-500"></i>
+                        <span>Enable Push</span>
+                    </button>
+                </div>
+
+                <form onsubmit="handleReminderAddSubmit(event)" class="space-y-2.5 sm:space-y-3">
+                    <div class="grid grid-cols-1 sm:grid-cols-12 gap-2.5 sm:gap-3">
+                        <input type="text" id="reminder-title" placeholder="Reminder title (e.g. Pay electricity bill)..." required
+                               class="sm:col-span-5 px-3 py-2.5 text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 text-slate-800 dark:text-slate-100">
+                        
+                        <input type="datetime-local" id="reminder-datetime" required
+                               class="sm:col-span-4 px-3 py-2.5 text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 text-slate-800 dark:text-slate-200">
+                        
+                        <select id="reminder-category"
+                                class="sm:col-span-3 px-3 py-2.5 text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 text-slate-800 dark:text-slate-200">
+                            <option value="Work">Work</option>
+                            <option value="Bills">Bills & Payment</option>
+                            <option value="Personal">Personal</option>
+                            <option value="Health">Health & Medicine</option>
+                            <option value="Shopping">Shopping</option>
+                        </select>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-12 gap-2.5 sm:gap-3">
+                        <input type="text" id="reminder-notes" placeholder="Optional notes or details..."
+                               class="sm:col-span-7 px-3 py-2.5 text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 text-slate-800 dark:text-slate-100">
+                        
+                        <!-- Pre-filled with WhatsApp target number 917760571602 -->
+                        <input type="tel" id="reminder-whatsapp-phone" value="917760571602" placeholder="WhatsApp Phone with country code..." required
+                               class="sm:col-span-3 px-3 py-2.5 text-xs font-semibold bg-emerald-50/50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 text-emerald-800 dark:text-emerald-200">
+
+                        <button type="submit" class="sm:col-span-2 px-4 py-2.5 bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs rounded-xl shadow-md flex items-center justify-center space-x-1.5 w-full">
+                            <i data-lucide="plus" class="w-4 h-4"></i>
+                            <span>Schedule</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Reminders Toolbar & List -->
+            <div class="space-y-3">
+                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 px-1">
+                    <div class="flex items-center space-x-2">
+                        <h3 class="text-xs font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wider">Scheduled Reminders</h3>
+                        <span id="reminder-count-badge" class="px-2 py-0.5 text-xs font-semibold rounded-full bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300">0</span>
+                    </div>
+
+                    <!-- Status Filter Tabs -->
+                    <div class="flex items-center space-x-1 bg-slate-100 dark:bg-slate-800 p-1 rounded-xl text-xs font-semibold self-stretch sm:self-auto justify-between">
+                        <button onclick="setReminderFilter('all')" id="rf-all" class="flex-1 sm:flex-none px-3 py-1 rounded-lg bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-100 shadow-sm text-center">All</button>
+                        <button onclick="setReminderFilter('upcoming')" id="rf-upcoming" class="flex-1 sm:flex-none px-3 py-1 rounded-lg text-slate-500 dark:text-slate-400 text-center">Upcoming</button>
+                        <button onclick="setReminderFilter('completed')" id="rf-completed" class="flex-1 sm:flex-none px-3 py-1 rounded-lg text-slate-500 dark:text-slate-400 text-center">Completed</button>
+                    </div>
+                </div>
+
+                <div id="reminders-container" class="space-y-2.5"></div>
+
+                <div id="reminders-empty-state" class="hidden flex-col items-center justify-center py-8 sm:py-10 text-center rounded-3xl border border-dashed border-slate-200 dark:border-slate-800 bg-white/50 dark:bg-slate-900/40">
+                    <i data-lucide="bell-off" class="w-6 h-6 text-slate-400 mb-2"></i>
+                    <p class="text-xs font-medium text-slate-500 dark:text-slate-400">No scheduled reminders found.</p>
+                </div>
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- EDIT ITEM / TASK MODAL -->
+    <div id="edit-modal" class="fixed inset-0 z-50 flex items-center justify-center p-3.5 bg-slate-950/60 backdrop-blur-sm hidden animate-fadeIn">
+        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl sm:rounded-3xl w-full max-w-md shadow-2xl overflow-hidden animate-popIn p-5 sm:p-6">
+            <div class="flex items-center justify-between mb-4">
+                <h3 id="edit-modal-title" class="font-bold text-sm sm:text-base text-slate-800 dark:text-slate-100">Edit Title</h3>
+                <button onclick="closeEditModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            <form onsubmit="handleEditSubmit(event)" class="space-y-4">
+                <input type="hidden" id="edit-item-id">
+                <input type="hidden" id="edit-item-type">
+                <div>
+                    <label id="edit-modal-label" class="block text-xs font-bold text-slate-500 uppercase mb-1">Name</label>
+                    <input type="text" id="edit-item-text" required
+                           class="w-full px-3.5 py-2.5 text-xs sm:text-sm bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/70 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-800 dark:text-slate-100">
+                </div>
+                <div class="flex items-center justify-end space-x-2 pt-2">
+                    <button type="button" onclick="closeEditModal()" class="px-4 py-2 text-xs font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl">Cancel</button>
+                    <button type="submit" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold rounded-xl shadow-md">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- TARGET MONEY BUDGET MODAL -->
+    <div id="target-modal" class="fixed inset-0 z-50 flex items-center justify-center p-3.5 bg-slate-950/60 backdrop-blur-sm hidden animate-fadeIn">
+        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl sm:rounded-3xl w-full max-w-md shadow-2xl overflow-hidden animate-popIn p-5 sm:p-6">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="font-bold text-sm sm:text-base text-slate-800 dark:text-slate-100">Set Money Budget Target</h3>
+                <button onclick="closeTargetModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            <form onsubmit="handleTargetSubmit(event)" class="space-y-3.5">
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Category Name</label>
+                    <input type="text" id="target-category-input" placeholder="e.g. Petrol, Shopping, Groceries" required
+                           class="w-full px-3.5 py-2.5 text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 text-slate-800 dark:text-slate-100">
+                </div>
+                
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Target Amount (₹)</label>
+                    <input type="number" id="target-amount-input" placeholder="e.g. 4000" required min="1"
+                           class="w-full px-3.5 py-2.5 text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 text-slate-800 dark:text-slate-100">
+                </div>
+
+                <div class="grid grid-cols-2 gap-2.5">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Timeframe</label>
+                        <select id="target-timeframe-input" class="w-full px-2.5 py-2.5 text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 text-slate-800 dark:text-slate-200">
+                            <option value="Monthly">Monthly</option>
+                            <option value="Yearly">Yearly</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Target Month</label>
+                        <input type="month" id="target-month-input" required
+                               class="w-full px-2.5 py-2.5 text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 text-slate-800 dark:text-slate-200">
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-end space-x-2 pt-2">
+                    <button type="button" onclick="closeTargetModal()" class="px-4 py-2 text-xs font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl">Cancel</button>
+                    <button type="submit" class="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold rounded-xl shadow-md">Save Target</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- WHATSAPP REAL-TIME TRIGGER ALERT POPUP -->
+    <div id="whatsapp-alert-modal" class="fixed inset-0 z-50 flex items-center justify-center p-3.5 bg-slate-950/70 backdrop-blur-md hidden animate-fadeIn">
+        <div class="bg-white dark:bg-slate-900 border border-emerald-500/30 rounded-2xl sm:rounded-3xl w-full max-w-md shadow-2xl overflow-hidden p-5 sm:p-6 animate-popIn text-center space-y-3.5">
+            <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-emerald-100 dark:bg-emerald-950/80 text-emerald-600 dark:text-emerald-400 mx-auto flex items-center justify-center animate-bounceSubtle">
+                <i data-lucide="bell-ring" class="w-6 h-6 sm:w-7 sm:h-7"></i>
+            </div>
+            <div>
+                <span class="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-emerald-100 text-emerald-700 dark:bg-emerald-900/60 dark:text-emerald-300">Reminder Triggered Now</span>
+                <h3 id="wa-alert-title" class="text-sm sm:text-base font-extrabold text-slate-800 dark:text-slate-100 mt-2">Pay Electricity Bill</h3>
+                <p id="wa-alert-notes" class="text-xs text-slate-500 dark:text-slate-400 mt-1">Scheduled for now</p>
+            </div>
+
+            <div class="p-3 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/80 text-left space-y-0.5">
+                <span class="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 uppercase">Target WhatsApp Contact</span>
+                <p class="text-xs font-extrabold text-slate-800 dark:text-slate-100 flex items-center space-x-1">
+                    <span>+91 7760571602</span>
+                    <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-emerald-500"></i>
+                </p>
+            </div>
+
+            <div class="flex items-center space-x-2 pt-1">
+                <button onclick="dismissWhatsAppAlert()" class="w-1/2 py-2.5 text-xs font-bold text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl">Dismiss</button>
+                <button id="wa-alert-action-btn" onclick="" class="w-1/2 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-extrabold rounded-xl shadow-lg shadow-emerald-500/25 flex items-center justify-center space-x-1.5">
+                    <i data-lucide="message-circle" class="w-4 h-4"></i>
+                    <span>Send WhatsApp</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Snackbar / Toast Notification -->
+    <div id="snackbar" class="fixed bottom-4 right-4 left-4 sm:left-auto z-50 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none flex items-center justify-between sm:justify-start space-x-3 bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-4 py-3 rounded-2xl shadow-2xl border border-slate-800 dark:border-slate-200 max-w-md mx-auto">
+        <div class="flex items-center space-x-2 min-w-0">
+            <i data-lucide="info" class="w-4 h-4 text-blue-400 dark:text-blue-600 flex-shrink-0"></i>
+            <span id="snackbar-message" class="text-xs font-semibold truncate">Notification message</span>
+        </div>
+        <button id="snackbar-undo-btn" class="hidden text-xs font-bold underline text-blue-400 dark:text-blue-600 pl-2 flex-shrink-0">Undo</button>
+    </div>
+
+    <script>
+        /* ================= STATE MANAGEMENT ================= */
+        
+        // 1. Work Tasks State
+        let tasks = JSON.parse(localStorage.getItem('Shanhub_tasks_v5')) || [
+            { id: '1', title: 'Finish quarterly design presentation', completed: false },
+            { id: '2', title: 'Review pull requests on backend API', completed: true },
+            { id: '3', title: 'Send weekly progress email to client', completed: false }
+        ];
+
+        // 2. Grocery List State (Unified single list)
+        let listItems = JSON.parse(localStorage.getItem('Shanhub_grocery_items_v3')) || [
+            { id: 'l1', title: 'Fresh Organic Milk', checked: false },
+            { id: 'l2', title: 'Whole Wheat Bread', checked: true },
+            { id: 'l3', title: 'Avocados & Tomatoes', checked: false }
+        ];
+
+        // 3. Money Targets State
+        let moneyTargets = JSON.parse(localStorage.getItem('Shanhub_money_targets_v2')) || [
+            { id: 'm1', category: 'Petrol', amount: 4000, timeframe: 'Monthly', monthYear: '2026-09' },
+            { id: 'm2', category: 'Shopping', amount: 2000, timeframe: 'Monthly', monthYear: '2026-09' },
+            { id: 'm3', category: 'Groceries', amount: 10000, timeframe: 'Monthly', monthYear: '2026-09' }
+        ];
+
+        // 4. Spending Expenses State
+        let spendingExpenses = JSON.parse(localStorage.getItem('Shanhub_spending_expenses_v2')) || [
+            { id: 'e1', amount: 200, category: 'Petrol', note: 'Petrol fill up', date: '2026-09-30' },
+            { id: 'e2', amount: 14, category: 'Other', note: 'Milk pouch', date: '2026-09-30' },
+            { id: 'e3', amount: 450, category: 'Groceries', note: 'Vegetables & Snacks', date: '2026-09-28' }
+        ];
+
+        // 5. Reminders State
+        let reminders = JSON.parse(localStorage.getItem('Shanhub_reminders_v2')) || [
+            { 
+                id: 'r1', 
+                title: 'Pay Electricity Bill', 
+                datetime: '2026-09-30T18:00', 
+                category: 'Bills', 
+                notes: 'Bill amount ₹2,450', 
+                phone: '917760571602', 
+                completed: false, 
+                notified: false 
+            },
+            { 
+                id: 'r2', 
+                title: 'Refill Petrol Tank', 
+                datetime: '2026-10-01T09:00', 
+                category: 'Work', 
+                notes: 'Check tire pressure too', 
+                phone: '917760571602', 
+                completed: false, 
+                notified: false 
+            }
+        ];
+
+        // Active Calendar View State
+        let currentSpendingYear = 2026;
+        let currentSpendingMonth = 8; // 0-indexed (8 = September)
+        let selectedSpendingDateStr = '2026-09-30';
+        let currentReminderFilter = 'all';
+
+        let lastDeletedItem = null;
+        let lastDeletedType = null;
+        let undoTimeout = null;
+
+        /* Init function on Window Load */
+        window.onload = function() {
+            initTheme();
+            renderTasks();
+            renderListItems();
+            renderSpendingCalendar();
+            renderMoneyTargets();
+            renderReminders();
+            
+            document.getElementById('target-month-input').value = '2026-09';
+            document.getElementById('theme-toggle').addEventListener('click', toggleTheme);
+            
+            // Start Live Reminder Scanner (Every 2s for exact minute triggers)
+            setInterval(checkReminderAlerts, 2000);
+
+            lucide.createIcons();
+        };
+
+        /* Tab Switcher Logic */
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('bg-white', 'dark:bg-slate-700', 'text-blue-600', 'dark:text-white', 'shadow-sm');
+                btn.classList.add('text-slate-600', 'dark:text-slate-400');
+            });
+            const activeDesktopBtn = document.getElementById(`tab-btn-${tabId}`);
+            if (activeDesktopBtn) {
+                activeDesktopBtn.classList.add('bg-white', 'dark:bg-slate-700', 'text-blue-600', 'dark:text-white', 'shadow-sm');
+                activeDesktopBtn.classList.remove('text-slate-600', 'dark:text-slate-400');
+            }
+
+            document.querySelectorAll('.mob-tab-btn').forEach(btn => {
+                btn.classList.remove('bg-blue-600', 'text-white');
+                btn.classList.add('text-slate-600', 'dark:text-slate-400', 'bg-slate-100', 'dark:bg-slate-800');
+            });
+            const activeMobileBtn = document.getElementById(`mob-tab-btn-${tabId}`);
+            if (activeMobileBtn) {
+                activeMobileBtn.classList.add('bg-blue-600', 'text-white');
+                activeMobileBtn.classList.remove('text-slate-600', 'dark:text-slate-400', 'bg-slate-100', 'dark:bg-slate-800');
+            }
+
+            document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.add('hidden'));
+            const activePane = document.getElementById(`tab-content-${tabId}`);
+            if (activePane) activePane.classList.remove('hidden');
+
+            if (tabId === 'spending') renderSpendingCalendar();
+            if (tabId === 'money') renderMoneyTargets();
+            if (tabId === 'reminder') renderReminders();
+        }
+
+        /* ================= 1. WORK SECTION ================= */
+        function saveTasks() {
+            localStorage.setItem('Shanhub_tasks_v5', JSON.stringify(tasks));
+            renderTasks();
+        }
+
+        function renderTasks() {
+            const activeContainer = document.getElementById('active-tasks-container');
+            const completedContainer = document.getElementById('completed-tasks-container');
+            const activeEmptyState = document.getElementById('active-empty-state');
+            const completedEmptyState = document.getElementById('completed-empty-state');
+
+            const activeTasks = tasks.filter(t => !t.completed);
+            const completedTasks = tasks.filter(t => t.completed);
+
+            document.getElementById('stat-total-count').textContent = tasks.length;
+            document.getElementById('stat-active-count').textContent = activeTasks.length;
+            document.getElementById('stat-completed-count').textContent = completedTasks.length;
+
+            document.getElementById('active-tasks-badge').textContent = activeTasks.length;
+            document.getElementById('completed-tasks-badge').textContent = completedTasks.length;
+
+            const workBadge = document.getElementById('work-badge');
+            if (activeTasks.length > 0) {
+                workBadge.textContent = activeTasks.length;
+                workBadge.classList.remove('hidden');
+            } else {
+                workBadge.classList.add('hidden');
+            }
+
+            const clearBtn = document.getElementById('clear-completed-btn');
+            if (completedTasks.length > 0) clearBtn.classList.remove('hidden');
+            else clearBtn.classList.add('hidden');
+
+            activeContainer.innerHTML = '';
+            if (activeTasks.length === 0) {
+                activeEmptyState.classList.remove('hidden');
+                activeEmptyState.classList.add('flex');
+            } else {
+                activeEmptyState.classList.add('hidden');
+                activeTasks.forEach(task => activeContainer.appendChild(createWorkTaskCardHTML(task)));
+            }
+
+            completedContainer.innerHTML = '';
+            if (completedTasks.length === 0) {
+                completedEmptyState.classList.remove('hidden');
+                completedEmptyState.classList.add('flex');
+            } else {
+                completedEmptyState.classList.add('hidden');
+                completedTasks.forEach(task => completedContainer.appendChild(createWorkTaskCardHTML(task)));
+            }
+
+            lucide.createIcons();
+        }
+
+        function createWorkTaskCardHTML(task) {
+            const card = document.createElement('div');
+            card.className = `p-3 sm:p-4 rounded-2xl bg-white dark:bg-slate-900 border transition-all duration-200 flex items-center justify-between gap-2.5 sm:gap-4 shadow-sm hover:shadow-md ${
+                task.completed 
+                ? 'border-slate-200/60 dark:border-slate-800/50 bg-slate-50/60 dark:bg-slate-900/40 opacity-80' 
+                : 'border-slate-200/90 dark:border-slate-800'
+            }`;
+
+            card.innerHTML = `
+                <div class="flex items-center space-x-2.5 sm:space-x-3 min-w-0 flex-1">
+                    <span class="w-2 h-2 rounded-full flex-shrink-0 ${task.completed ? 'bg-slate-300 dark:bg-slate-700' : 'bg-blue-600'}"></span>
+                    <p class="text-xs sm:text-sm font-semibold truncate ${
+                        task.completed 
+                        ? 'line-through text-slate-400 dark:text-slate-500' 
+                        : 'text-slate-800 dark:text-slate-100'
+                    }">
+                        ${escapeHTML(task.title)}
+                    </p>
+                </div>
+
+                <div class="flex items-center space-x-1 sm:space-x-1.5 flex-shrink-0">
+                    <!-- CUSTOM 'SH' COMPLETION BADGE BUTTON -->
+                    <button onclick="toggleTaskComplete('${task.id}')" title="${task.completed ? 'Mark Active' : 'Mark Completed'}"
+                            class="px-2.5 py-1.5 rounded-xl transition-all duration-200 text-xs font-black tracking-wider flex items-center justify-center min-w-[36px] ${
+                                task.completed 
+                                ? 'bg-emerald-500 text-white shadow-md shadow-emerald-500/20' 
+                                : 'bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-950/30'
+                            }">
+                           <i data-lucide="check-check" class="w-5 h-5"></i>
+                    </button>
+
+                    <button onclick="openEditModal('${task.id}', 'work')" title="Edit Task"
+                            class="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950/30 transition-all duration-200">
+                        <i data-lucide="pencil" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i>
+                    </button>
+
+                    <button onclick="deleteTask('${task.id}')" title="Delete Task"
+                            class="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition-all duration-200">
+                        <i data-lucide="trash-2" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i>
+                    </button>
+                </div>
+            `;
+            return card;
+        }
+
+        function handleQuickTaskAdd(e) {
+            e.preventDefault();
+            const input = document.getElementById('quick-task-input');
+            const title = input.value.trim();
+            if (!title) return;
+
+            tasks.unshift({ id: Date.now().toString(), title: title, completed: false });
+            input.value = '';
+            saveTasks();
+            showSnackbar('Task added to Active section.');
+        }
+
+        function toggleTaskComplete(id) {
+            tasks = tasks.map(t => t.id === id ? { ...t, completed: !t.completed } : t);
+            saveTasks();
+        }
+
+        function deleteTask(id) {
+            const task = tasks.find(t => t.id === id);
+            if (!task) return;
+
+            lastDeletedItem = task;
+            lastDeletedType = 'work';
+            tasks = tasks.filter(t => t.id !== id);
+            saveTasks();
+            showSnackbar('Task deleted', true);
+        }
+
+        function clearAllCompleted() {
+            tasks = tasks.filter(t => !t.completed);
+            saveTasks();
+            showSnackbar('Cleared completed tasks.');
+        }
+
+        /* ================= 2. LIST SECTION ================= */
+        function saveListItems() {
+            localStorage.setItem('Shanhub_grocery_items_v3', JSON.stringify(listItems));
+            renderListItems();
+        }
+
+        function renderListItems() {
+            const listContainer = document.getElementById('unified-list-container');
+            const listEmptyState = document.getElementById('list-empty-state');
+            const checkedCount = listItems.filter(item => item.checked).length;
+
+            document.getElementById('list-stat-total-count').textContent = listItems.length;
+            document.getElementById('list-stat-checked-count').textContent = checkedCount;
+            document.getElementById('unified-list-badge').textContent = listItems.length;
+
+            const listBadge = document.getElementById('list-badge');
+            if (listItems.length > 0) {
+                listBadge.textContent = listItems.length;
+                listBadge.classList.remove('hidden');
+            } else {
+                listBadge.classList.add('hidden');
+            }
+
+            const clearCheckedBtn = document.getElementById('clear-checked-list-btn');
+            const clearAllBtn = document.getElementById('clear-all-list-btn');
+            
+            if (checkedCount > 0) clearCheckedBtn.classList.remove('hidden');
+            else clearCheckedBtn.classList.add('hidden');
+
+            if (listItems.length > 0) clearAllBtn.classList.remove('hidden');
+            else clearAllBtn.classList.add('hidden');
+
+            listContainer.innerHTML = '';
+            if (listItems.length === 0) {
+                listEmptyState.classList.remove('hidden');
+                listEmptyState.classList.add('flex');
+            } else {
+                listEmptyState.classList.add('hidden');
+                listItems.forEach(item => listContainer.appendChild(createListItemCardHTML(item)));
+            }
+
+            lucide.createIcons();
+        }
+
+        function createListItemCardHTML(item) {
+            const card = document.createElement('div');
+            card.className = `p-3 sm:p-4 rounded-2xl bg-white dark:bg-slate-900 border transition-all duration-200 flex items-center justify-between gap-2.5 sm:gap-4 shadow-sm hover:shadow-md ${
+                item.checked 
+                ? 'border-purple-200/60 dark:border-purple-900/30 bg-purple-50/30 dark:bg-purple-950/10' 
+                : 'border-slate-200/90 dark:border-slate-800'
+            }`;
+
+            card.innerHTML = `
+                <div class="flex items-center space-x-2.5 sm:space-x-3 min-w-0 flex-1">
+                    <span class="w-2 h-2 rounded-full flex-shrink-0 ${item.checked ? 'bg-purple-400 dark:bg-purple-600' : 'bg-purple-600'}"></span>
+                    <p class="text-xs sm:text-sm font-semibold truncate ${
+                        item.checked 
+                        ? 'line-through text-slate-400 dark:text-slate-500' 
+                        : 'text-slate-800 dark:text-slate-100'
+                    }">
+                        ${escapeHTML(item.title)}
+                    </p>
+                </div>
+
+                <div class="flex items-center space-x-1 sm:space-x-1.5 flex-shrink-0">
+                    <!-- CUSTOM 'SH' CHECKED BADGE BUTTON -->
+                    <button onclick="toggleListItemCheck('${item.id}')" title="${item.checked ? 'Uncheck Item' : 'Check Item'}"
+                            class="px-2.5 py-1.5 rounded-xl transition-all duration-200 text-xs font-black tracking-wider flex items-center justify-center min-w-[36px] ${
+                                item.checked 
+                                ? 'bg-purple-600 text-white shadow-md shadow-purple-500/20' 
+                                : 'bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-purple-600 dark:hover:text-purple-400 hover:bg-purple-50 dark:hover:bg-purple-950/30'
+                            }">
+                        
+                    </button>
+
+                    <button onclick="openEditModal('${item.id}', 'list')" title="Edit Item"
+                            class="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950/30 transition-all duration-200">
+                        <i data-lucide="pencil" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i>
+                    </button>
+
+                    <button onclick="deleteListItem('${item.id}')" title="Delete Item"
+                            class="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition-all duration-200">
+                        <i data-lucide="trash-2" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i>
+                    </button>
+                </div>
+            `;
+            return card;
+        }
+
+        function handleQuickListItemAdd(e) {
+            e.preventDefault();
+            const input = document.getElementById('quick-list-input');
+            const title = input.value.trim();
+            if (!title) return;
+
+            listItems.unshift({ id: 'l_' + Date.now().toString(), title: title, checked: false });
+            input.value = '';
+            saveListItems();
+            showSnackbar('Item added to Grocery list.');
+        }
+
+        function toggleListItemCheck(id) {
+            listItems = listItems.map(item => item.id === id ? { ...item, checked: !item.checked } : item);
+            saveListItems();
+        }
+
+        function deleteListItem(id) {
+            const item = listItems.find(i => i.id === id);
+            if (!item) return;
+
+            lastDeletedItem = item;
+            lastDeletedType = 'list';
+            listItems = listItems.filter(i => i.id !== id);
+            saveListItems();
+            showSnackbar('Item deleted', true);
+        }
+
+        function clearCheckedListItems() {
+            listItems = listItems.filter(i => !i.checked);
+            saveListItems();
+        }
+
+        function clearAllListItems() {
+            listItems = [];
+            saveListItems();
+        }
+
+        /* ================= 3. SPENDING SECTION (CALENDAR & EXPENSE LOG) ================= */
+        function saveExpenses() {
+            localStorage.setItem('Shanhub_spending_expenses_v2', JSON.stringify(spendingExpenses));
+            renderSpendingCalendar();
+            renderMoneyTargets();
+        }
+
+        function renderSpendingCalendar() {
+            const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+            document.getElementById('calendar-month-year-display').textContent = `${monthNames[currentSpendingMonth]} ${currentSpendingYear}`;
+
+            const daysContainer = document.getElementById('spending-calendar-days');
+            daysContainer.innerHTML = '';
+
+            const firstDay = new Date(currentSpendingYear, currentSpendingMonth, 1).getDay();
+            const daysInMonth = new Date(currentSpendingYear, currentSpendingMonth + 1, 0).getDate();
+
+            const monthStr = String(currentSpendingMonth + 1).padStart(2, '0');
+
+            for (let i = 0; i < firstDay; i++) {
+                const emptyCell = document.createElement('div');
+                emptyCell.className = 'h-9 sm:h-10 rounded-xl bg-transparent';
+                daysContainer.appendChild(emptyCell);
+            }
+
+            for (let d = 1; d <= daysInMonth; d++) {
+                const dateStr = `${currentSpendingYear}-${monthStr}-${String(d).padStart(2, '0')}`;
+                
+                const dayTotal = spendingExpenses
+                    .filter(e => e.date === dateStr)
+                    .reduce((sum, e) => sum + Number(e.amount), 0);
+
+                const isToday = dateStr === '2026-09-30';
+                const isSelected = dateStr === selectedSpendingDateStr;
+
+                const dayBtn = document.createElement('button');
+                dayBtn.onclick = () => selectSpendingDate(dateStr);
+                
+                dayBtn.className = `h-9 sm:h-11 rounded-xl sm:rounded-2xl p-0.5 sm:p-1 flex flex-col items-center justify-between border text-[10px] sm:text-xs font-bold transition-all ${
+                    isSelected 
+                    ? 'bg-indigo-600 text-white border-indigo-600 ring-2 ring-indigo-500/50 shadow-md' 
+                    : isToday 
+                    ? 'bg-indigo-50 dark:bg-indigo-950/50 border-indigo-300 dark:border-indigo-700 text-indigo-600 dark:text-indigo-400' 
+                    : 'bg-slate-50/80 dark:bg-slate-800/60 border-slate-200/60 dark:border-slate-700/50 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300'
+                }`;
+
+                dayBtn.innerHTML = `
+                    <span>${d}</span>
+                    ${dayTotal > 0 ? `<span class="text-[8px] sm:text-[9px] px-0.5 sm:px-1 rounded-full ${isSelected ? 'bg-indigo-700 text-white' : 'text-indigo-600 dark:text-indigo-400 font-extrabold'}">₹${dayTotal}</span>` : '<span class="text-[8px] opacity-0">-</span>'}
+                `;
+
+                daysContainer.appendChild(dayBtn);
+            }
+
+            populateCategoryDropdown();
+            renderSelectedDateExpenses();
+            renderBottomSpendingSummaries();
+
+            lucide.createIcons();
+        }
+
+        function populateCategoryDropdown() {
+            const dropdown = document.getElementById('expense-category-select');
+            const currentMonthStr = `${currentSpendingYear}-${String(currentSpendingMonth + 1).padStart(2, '0')}`;
+            
+            const targetCategories = moneyTargets
+                .filter(m => m.monthYear === currentMonthStr || m.timeframe === 'Yearly')
+                .map(m => m.category);
+
+            const uniqueCategories = Array.from(new Set(targetCategories));
+
+            dropdown.innerHTML = '<option value="Other">Other Category</option>';
+            uniqueCategories.forEach(cat => {
+                const opt = document.createElement('option');
+                opt.value = cat;
+                opt.textContent = cat;
+                dropdown.appendChild(opt);
+            });
+        }
+
+        function selectSpendingDate(dateStr) {
+            selectedSpendingDateStr = dateStr;
+            renderSpendingCalendar();
+        }
+
+        function changeSpendingMonth(delta) {
+            currentSpendingMonth += delta;
+            if (currentSpendingMonth > 11) {
+                currentSpendingMonth = 0;
+                currentSpendingYear++;
+            } else if (currentSpendingMonth < 0) {
+                currentSpendingMonth = 11;
+                currentSpendingYear--;
+            }
+            renderSpendingCalendar();
+        }
+
+        function goToCurrentSpendingMonth() {
+            currentSpendingYear = 2026;
+            currentSpendingMonth = 8;
+            selectedSpendingDateStr = '2026-09-30';
+            renderSpendingCalendar();
+        }
+
+        function renderSelectedDateExpenses() {
+            document.getElementById('selected-date-heading').textContent = `Date: ${selectedSpendingDateStr}`;
+            
+            const dateExpenses = spendingExpenses.filter(e => e.date === selectedSpendingDateStr);
+            const dateTotal = dateExpenses.reduce((sum, e) => sum + Number(e.amount), 0);
+            
+            document.getElementById('selected-date-total-badge').textContent = `₹${dateTotal}`;
+
+            const listContainer = document.getElementById('selected-date-expense-list');
+            listContainer.innerHTML = '';
+
+            if (dateExpenses.length === 0) {
+                listContainer.innerHTML = `
+                    <div class="py-6 sm:py-8 text-center text-xs text-slate-400 font-medium border border-dashed border-slate-200 dark:border-slate-800 rounded-2xl">
+                        No expenses logged for this date.
+                    </div>
+                `;
+                return;
+            }
+
+            dateExpenses.forEach(exp => {
+                const item = document.createElement('div');
+                item.className = 'p-2.5 sm:p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200/70 dark:border-slate-700/70 flex items-center justify-between gap-2.5 text-xs';
+                item.innerHTML = `
+                    <div class="min-w-0 flex-1">
+                        <div class="flex items-center space-x-1.5 sm:space-x-2">
+                            <span class="font-bold text-slate-800 dark:text-slate-100 truncate">${escapeHTML(exp.note)}</span>
+                            <span class="px-1.5 sm:px-2 py-0.5 rounded-full text-[9px] sm:text-[10px] font-semibold bg-indigo-100 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 flex-shrink-0">${escapeHTML(exp.category)}</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-2 flex-shrink-0">
+                        <span class="font-extrabold text-slate-900 dark:text-white">₹${exp.amount}</span>
+                        <button onclick="deleteExpense('${exp.id}')" class="text-slate-400 hover:text-rose-500 p-0.5">
+                            <i data-lucide="x" class="w-3.5 h-3.5"></i>
+                        </button>
+                    </div>
+                `;
+                listContainer.appendChild(item);
+            });
+        }
+
+        function handleAddExpenseSubmit(e) {
+            e.preventDefault();
+            const amount = document.getElementById('expense-amount').value;
+            const category = document.getElementById('expense-category-select').value;
+            const note = document.getElementById('expense-note').value.trim();
+
+            if (!amount || !note) return;
+
+            spendingExpenses.unshift({
+                id: 'exp_' + Date.now().toString(),
+                amount: Number(amount),
+                category: category,
+                note: note,
+                date: selectedSpendingDateStr
+            });
+
+            document.getElementById('expense-amount').value = '';
+            document.getElementById('expense-note').value = '';
+
+            saveExpenses();
+            showSnackbar(`Logged ₹${amount} for ${note}`);
+        }
+
+        function deleteExpense(id) {
+            spendingExpenses = spendingExpenses.filter(e => e.id !== id);
+            saveExpenses();
+        }
+
+        function renderBottomSpendingSummaries() {
+            const container = document.getElementById('spending-targets-summary-container');
+            container.innerHTML = '';
+
+            const monthStr = `${currentSpendingYear}-${String(currentSpendingMonth + 1).padStart(2, '0')}`;
+            const activeMonthTargets = moneyTargets.filter(m => m.monthYear === monthStr || m.timeframe === 'Yearly');
+
+            activeMonthTargets.forEach(target => {
+                const categorySpent = spendingExpenses
+                    .filter(e => e.category === target.category && e.date.startsWith(monthStr))
+                    .reduce((sum, e) => sum + Number(e.amount), 0);
+
+                const remaining = target.amount - categorySpent;
+                const percent = Math.min(Math.round((categorySpent / target.amount) * 100), 100);
+                const isOver = categorySpent > target.amount;
+
+                const card = document.createElement('div');
+                card.className = 'p-3.5 sm:p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-sm space-y-2';
+                card.innerHTML = `
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-bold text-slate-800 dark:text-slate-100">${escapeHTML(target.category)}</span>
+                        <span class="text-xs font-semibold ${isOver ? 'text-rose-500 font-extrabold' : 'text-emerald-600 dark:text-emerald-400'}">
+                            ${isOver ? 'Over by ₹' + Math.abs(remaining) : '₹' + remaining + ' left'}
+                        </span>
+                    </div>
+                    <div class="w-full h-2 rounded-full bg-slate-100 dark:bg-slate-800 overflow-hidden">
+                        <div class="h-full rounded-full ${isOver ? 'bg-rose-500' : 'bg-emerald-500'}" style="width: ${percent}%"></div>
+                    </div>
+                    <div class="flex items-center justify-between text-[10px] sm:text-[11px] text-slate-400 font-medium">
+                        <span>Spent: ₹${categorySpent}</span>
+                        <span>Target: ₹${target.amount}</span>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+
+            const otherSpent = spendingExpenses
+                .filter(e => e.category === 'Other' && e.date.startsWith(monthStr))
+                .reduce((sum, e) => sum + Number(e.amount), 0);
+
+            const otherCard = document.createElement('div');
+            otherCard.className = 'p-3.5 sm:p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-sm space-y-2';
+            otherCard.innerHTML = `
+                <div class="flex items-center justify-between">
+                    <span class="text-xs font-bold text-slate-800 dark:text-slate-100">Other (Unallocated)</span>
+                    <span class="text-xs font-bold text-indigo-600 dark:text-indigo-400">Total Spent</span>
+                </div>
+                <div class="text-base sm:text-lg font-extrabold text-slate-800 dark:text-slate-100">₹${otherSpent}</div>
+                <p class="text-[10px] sm:text-[11px] text-slate-400">Misc daily expenses outside targets</p>
+            `;
+            container.appendChild(otherCard);
+        }
+
+        /* ================= 4. MONEY SECTION (TARGETS & BUDGETS) ================= */
+        function saveMoneyTargets() {
+            localStorage.setItem('Shanhub_money_targets_v2', JSON.stringify(moneyTargets));
+            renderMoneyTargets();
+            renderSpendingCalendar();
+        }
+
+        function renderMoneyTargets() {
+            const grid = document.getElementById('money-targets-grid');
+            const emptyState = document.getElementById('money-empty-state');
+            const filter = document.getElementById('money-timeframe-filter').value;
+
+            const currentMonthStr = '2026-09';
+            let filteredTargets = moneyTargets;
+
+            if (filter === 'current_month') {
+                filteredTargets = moneyTargets.filter(m => m.monthYear === currentMonthStr);
+            } else if (filter === 'yearly') {
+                filteredTargets = moneyTargets.filter(m => m.timeframe === 'Yearly');
+            }
+
+            grid.innerHTML = '';
+            if (filteredTargets.length === 0) {
+                emptyState.classList.remove('hidden');
+                emptyState.classList.add('flex');
+            } else {
+                emptyState.classList.add('hidden');
+                filteredTargets.forEach(target => {
+                    grid.appendChild(createMoneyTargetCardHTML(target));
+                });
+            }
+
+            lucide.createIcons();
+        }
+
+        function createMoneyTargetCardHTML(target) {
+            const monthStr = target.monthYear;
+            const categorySpent = spendingExpenses
+                .filter(e => e.category === target.category && e.date.startsWith(monthStr))
+                .reduce((sum, e) => sum + Number(e.amount), 0);
+
+            const remaining = target.amount - categorySpent;
+            const percent = Math.min(Math.round((categorySpent / target.amount) * 100), 100);
+            const isOver = categorySpent > target.amount;
+
+            const card = document.createElement('div');
+            card.className = 'p-4 sm:p-5 rounded-2xl sm:rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-sm space-y-3.5';
+            card.innerHTML = `
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h3 class="font-bold text-xs sm:text-sm text-slate-800 dark:text-slate-100">${escapeHTML(target.category)}</h3>
+                        <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">${target.timeframe} (${target.monthYear})</span>
+                    </div>
+                    <button onclick="deleteMoneyTarget('${target.id}')" class="text-slate-400 hover:text-rose-500 p-1">
+                        <i data-lucide="trash-2" class="w-4 h-4"></i>
+                    </button>
+                </div>
+
+                <div class="space-y-1.5">
+                    <div class="flex items-center justify-between text-xs font-semibold">
+                        <span class="text-slate-500">Allocated Target</span>
+                        <span class="text-slate-900 dark:text-slate-100 font-bold">₹${target.amount}</span>
+                    </div>
+                    <div class="flex items-center justify-between text-xs font-semibold">
+                        <span class="text-slate-500">Spent So Far</span>
+                        <span class="${isOver ? 'text-rose-500 font-extrabold' : 'text-slate-900 dark:text-slate-100'}">₹${categorySpent}</span>
+                    </div>
+                    <div class="flex items-center justify-between text-xs font-bold pt-1 border-t border-slate-100 dark:border-slate-800">
+                        <span class="text-slate-600 dark:text-slate-400">Remaining Balance</span>
+                        <span class="${isOver ? 'text-rose-500' : 'text-emerald-600 dark:text-emerald-400'}">₹${remaining}</span>
+                    </div>
+                </div>
+
+                <div class="space-y-1">
+                    <div class="w-full h-2.5 rounded-full bg-slate-100 dark:bg-slate-800 overflow-hidden">
+                        <div class="h-full rounded-full ${isOver ? 'bg-rose-500' : 'bg-emerald-500'}" style="width: ${percent}%"></div>
+                    </div>
+                    <div class="text-right text-[10px] font-bold text-slate-400">${percent}% used</div>
+                </div>
+            `;
+            return card;
+        }
+
+        function openTargetModal() {
+            document.getElementById('target-modal').classList.remove('hidden');
+        }
+
+        function closeTargetModal() {
+            document.getElementById('target-modal').classList.add('hidden');
+        }
+
+        function handleTargetSubmit(e) {
+            e.preventDefault();
+            const category = document.getElementById('target-category-input').value.trim();
+            const amount = document.getElementById('target-amount-input').value;
+            const timeframe = document.getElementById('target-timeframe-input').value;
+            const monthYear = document.getElementById('target-month-input').value;
+
+            if (!category || !amount) return;
+
+            moneyTargets.unshift({
+                id: 'm_' + Date.now().toString(),
+                category: category,
+                amount: Number(amount),
+                timeframe: timeframe,
+                monthYear: monthYear
+            });
+
+            closeTargetModal();
+            saveMoneyTargets();
+            showSnackbar(`Target set for ${category}: ₹${amount}`);
+        }
+
+        function deleteMoneyTarget(id) {
+            moneyTargets = moneyTargets.filter(m => m.id !== id);
+            saveMoneyTargets();
+        }
+
+        /* ================= 5. REMINDER SECTION & WHATSAPP INTEGRATION ================= */
+        function saveReminders() {
+            localStorage.setItem('Shanhub_reminders_v2', JSON.stringify(reminders));
+            renderReminders();
+        }
+
+        function setReminderFilter(filter) {
+            currentReminderFilter = filter;
+            ['all', 'upcoming', 'completed'].forEach(f => {
+                const btn = document.getElementById(`rf-${f}`);
+                if (f === filter) {
+                    btn.className = 'flex-1 sm:flex-none px-3 py-1 rounded-lg bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-100 shadow-sm text-center';
+                } else {
+                    btn.className = 'flex-1 sm:flex-none px-3 py-1 rounded-lg text-slate-500 dark:text-slate-400 text-center';
+                }
+            });
+            renderReminders();
+        }
+
+        function renderReminders() {
+            const container = document.getElementById('reminders-container');
+            const emptyState = document.getElementById('reminders-empty-state');
+            
+            let filtered = reminders;
+            if (currentReminderFilter === 'upcoming') {
+                filtered = reminders.filter(r => !r.completed);
+            } else if (currentReminderFilter === 'completed') {
+                filtered = reminders.filter(r => r.completed);
+            }
+
+            const activeReminders = reminders.filter(r => !r.completed);
+            document.getElementById('reminder-count-badge').textContent = activeReminders.length;
+            
+            const badge = document.getElementById('reminder-badge');
+            if (activeReminders.length > 0) {
+                badge.textContent = activeReminders.length;
+                badge.classList.remove('hidden');
+            } else {
+                badge.classList.add('hidden');
+            }
+
+            container.innerHTML = '';
+            if (filtered.length === 0) {
+                emptyState.classList.remove('hidden');
+                emptyState.classList.add('flex');
+            } else {
+                emptyState.classList.add('hidden');
+                filtered.forEach(r => container.appendChild(createReminderCardHTML(r)));
+            }
+
+            lucide.createIcons();
+        }
+
+        function createReminderCardHTML(r) {
+            const card = document.createElement('div');
+            card.className = `p-3.5 sm:p-4 rounded-2xl bg-white dark:bg-slate-900 border transition-all flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4 shadow-sm ${
+                r.completed ? 'opacity-60 border-slate-200/60 dark:border-slate-800' : 'border-slate-200/90 dark:border-slate-800'
+            }`;
+
+            const formattedDate = new Date(r.datetime).toLocaleString('en-US', {
+                month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit'
+            });
+
+            const isPast = new Date(r.datetime) < new Date() && !r.completed;
+
+            card.innerHTML = `
+                <div class="flex items-start space-x-2.5 sm:space-x-3 min-w-0 flex-1 w-full sm:w-auto">
+                    <!-- CUSTOM 'SH' REMINDER COMPLETION BADGE -->
+                    <button onclick="toggleReminderComplete('${r.id}')" title="${r.completed ? 'Mark Active' : 'Mark Completed'}"
+                            class="mt-0.5 px-2.5 py-1.5 rounded-xl transition-all duration-200 text-xs font-black tracking-wider flex items-center justify-center min-w-[36px] flex-shrink-0 ${
+                                r.completed 
+                                ? 'bg-amber-500 text-white shadow-md shadow-amber-500/20' 
+                                : 'bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-amber-600 dark:hover:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-950/30'
+                            }">
+                           <i data-lucide="check-check" class="w-5 h-5"></i>
+                    </button>
+
+                    <div class="min-w-0 flex-1">
+                        <div class="flex items-center space-x-1.5 sm:space-x-2 flex-wrap gap-y-1">
+                            <p class="text-xs sm:text-sm font-bold ${r.completed ? 'line-through text-slate-400' : 'text-slate-800 dark:text-slate-100'}">${escapeHTML(r.title)}</p>
+                            <span class="px-2 py-0.5 text-[9px] sm:text-[10px] font-bold rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">${escapeHTML(r.category)}</span>
+                            ${isPast ? '<span class="px-2 py-0.5 text-[9px] font-extrabold rounded-full bg-rose-100 text-rose-600 dark:bg-rose-950/60 dark:text-rose-400">Overdue</span>' : ''}
+                        </div>
+                        ${r.notes ? `<p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">${escapeHTML(r.notes)}</p>` : ''}
+                        <div class="flex items-center space-x-2 mt-1 text-[10px] sm:text-[11px] font-semibold text-slate-400 flex-wrap">
+                            <div class="flex items-center space-x-1">
+                                <i data-lucide="clock" class="w-3.5 h-3.5"></i>
+                                <span>${formattedDate}</span>
+                            </div>
+                            <span class="text-emerald-600 dark:text-emerald-400 font-bold">• WhatsApp (${r.phone || '917760571602'})</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex items-center space-x-2 self-end sm:self-center flex-shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-100 dark:border-slate-800/80 w-full sm:w-auto justify-end">
+                    <!-- WhatsApp Direct Share Button -->
+                    <button onclick="sendReminderWhatsApp('${r.id}')" title="Send via WhatsApp"
+                            class="px-3 py-1.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200/80 dark:border-emerald-800/80 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-600 hover:text-white dark:hover:bg-emerald-600 dark:hover:text-white transition-all text-xs font-bold flex items-center space-x-1.5 shadow-sm">
+                        <i data-lucide="message-circle" class="w-3.5 h-3.5"></i>
+                        <span>WhatsApp</span>
+                    </button>
+
+                    <button onclick="deleteReminder('${r.id}')" title="Delete Reminder" class="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-400 hover:text-rose-600">
+                        <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                    </button>
+                </div>
+            `;
+            return card;
+        }
+
+        function handleReminderAddSubmit(e) {
+            e.preventDefault();
+            const title = document.getElementById('reminder-title').value.trim();
+            const datetime = document.getElementById('reminder-datetime').value;
+            const category = document.getElementById('reminder-category').value;
+            const notes = document.getElementById('reminder-notes').value.trim();
+            let phone = document.getElementById('reminder-whatsapp-phone').value.replace(/[^0-9]/g, '');
+            if (!phone) phone = '917760571602';
+
+            if (!title || !datetime) return;
+
+            reminders.unshift({
+                id: 'r_' + Date.now().toString(),
+                title: title,
+                datetime: datetime,
+                category: category,
+                notes: notes,
+                phone: phone,
+                completed: false,
+                notified: false
+            });
+
+            document.getElementById('reminder-title').value = '';
+            document.getElementById('reminder-datetime').value = '';
+            document.getElementById('reminder-notes').value = '';
+
+            saveReminders();
+            showSnackbar('Reminder scheduled & linked to WhatsApp.');
+        }
+
+        /* Direct WhatsApp Link Generator */
+        function sendReminderWhatsApp(id) {
+            const r = reminders.find(item => item.id === id);
+            if (!r) return;
+
+            const targetPhone = r.phone || '917760571602';
+
+            const formattedDate = new Date(r.datetime).toLocaleString('en-US', {
+                month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
+            });
+
+            let text = `⏰ *REMINDER NOTIFICATION - ShanHUB*\n\n`;
+            text += `📌 *Title:* ${r.title}\n`;
+            text += `📅 *Scheduled Time:* ${formattedDate}\n`;
+            text += `🏷️ *Category:* ${r.category}\n`;
+            if (r.notes) text += `📝 *Notes:* ${r.notes}\n`;
+            text += `\n_Generated via ShanHub Workspace Suite_`;
+
+            const encodedText = encodeURIComponent(text);
+            const waUrl = `https://wa.me/${targetPhone}?text=${encodedText}`;
+
+            window.open(waUrl, '_blank');
+        }
+
+        /* Check Reminder Alerts & Live WhatsApp Modal Popups */
+        function requestNotificationPermission() {
+            if ("Notification" in window) {
+                Notification.requestPermission().then(permission => {
+                    if (permission === "granted") {
+                        showSnackbar("Push notifications enabled!");
+                    } else {
+                        showSnackbar("Notification permission denied.");
+                    }
+                });
+            } else {
+                showSnackbar("Browser does not support notifications.");
+            }
+        }
+
+        function checkReminderAlerts() {
+            const now = new Date();
+            reminders.forEach(r => {
+                if (!r.completed && !r.notified) {
+                    const remTime = new Date(r.datetime);
+                    if (remTime <= now) {
+                        r.notified = true;
+                        saveReminders();
+
+                        // Sound chime alert
+                        playAlertSound();
+
+                        // Display Real-time WhatsApp Popup
+                        showWhatsAppAlertModal(r);
+
+                        // Native Browser Push Notification
+                        if ("Notification" in window && Notification.permission === "granted") {
+                            new Notification(`⏰ Reminder: ${r.title}`, {
+                                body: `${r.category} • ${r.notes || 'Scheduled reminder for WhatsApp'}`,
+                                icon: 'https://cdn-icons-png.flaticon.com/512/3602/3602145.png'
+                            });
+                        }
+                    }
+                }
+            });
+        }
+
+        function showWhatsAppAlertModal(r) {
+            document.getElementById('wa-alert-title').textContent = r.title;
+            document.getElementById('wa-alert-notes').textContent = r.notes || `${r.category} scheduled alert`;
+            
+            const btn = document.getElementById('wa-alert-action-btn');
+            btn.onclick = function() {
+                sendReminderWhatsApp(r.id);
+                dismissWhatsAppAlert();
+            };
+
+            document.getElementById('whatsapp-alert-modal').classList.remove('hidden');
+        }
+
+        function dismissWhatsAppAlert() {
+            document.getElementById('whatsapp-alert-modal').classList.add('hidden');
+        }
+
+        function playAlertSound() {
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(587.33, ctx.currentTime);
+                osc.frequency.setValueAtTime(880, ctx.currentTime + 0.15);
+                gain.gain.setValueAtTime(0.3, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.5);
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.start();
+                osc.stop(ctx.currentTime + 0.5);
+            } catch(e) {}
+        }
+
+        function toggleReminderComplete(id) {
+            reminders = reminders.map(r => r.id === id ? { ...r, completed: !r.completed } : r);
+            saveReminders();
+        }
+
+        function deleteReminder(id) {
+            reminders = reminders.filter(r => r.id !== id);
+            saveReminders();
+        }
+
+        /* ================= GLOBAL EDIT MODAL ================= */
+        function openEditModal(id, type) {
+            let item;
+            if (type === 'work') {
+                item = tasks.find(t => t.id === id);
+                document.getElementById('edit-modal-title').textContent = 'Edit Work Task';
+            } else {
+                item = listItems.find(i => i.id === id);
+                document.getElementById('edit-modal-title').textContent = 'Edit List Item';
+            }
+
+            if (!item) return;
+
+            document.getElementById('edit-item-id').value = item.id;
+            document.getElementById('edit-item-type').value = type;
+            document.getElementById('edit-item-text').value = item.title;
+            document.getElementById('edit-modal').classList.remove('hidden');
+        }
+
+        function closeEditModal() {
+            document.getElementById('edit-modal').classList.add('hidden');
+        }
+
+        function handleEditSubmit(e) {
+            e.preventDefault();
+            const id = document.getElementById('edit-item-id').value;
+            const type = document.getElementById('edit-item-type').value;
+            const newTitle = document.getElementById('edit-item-text').value.trim();
+
+            if (!newTitle) return;
+
+            if (type === 'work') {
+                tasks = tasks.map(t => t.id === id ? { ...t, title: newTitle } : t);
+                saveTasks();
+            } else {
+                listItems = listItems.map(i => i.id === id ? { ...i, title: newTitle } : i);
+                saveListItems();
+            }
+
+            closeEditModal();
+            showSnackbar('Updated successfully.');
+        }
+
+        /* Undo Logic */
+        function undoDelete() {
+            if (lastDeletedItem) {
+                if (lastDeletedType === 'work') {
+                    tasks.unshift(lastDeletedItem);
+                    saveTasks();
+                } else if (lastDeletedType === 'list') {
+                    listItems.unshift(lastDeletedItem);
+                    saveListItems();
+                }
+                lastDeletedItem = null;
+                lastDeletedType = null;
+                hideSnackbar();
+            }
+        }
+
+        function showSnackbar(message, showUndo = false) {
+            const snackbar = document.getElementById('snackbar');
+            const snackbarMsg = document.getElementById('snackbar-message');
+            const undoBtn = document.getElementById('snackbar-undo-btn');
+
+            clearTimeout(undoTimeout);
+            snackbarMsg.textContent = message;
+
+            if (showUndo) {
+                undoBtn.classList.remove('hidden');
+                undoBtn.onclick = undoDelete;
+            } else {
+                undoBtn.classList.add('hidden');
+            }
+
+            snackbar.classList.remove('translate-y-20', 'opacity-0', 'pointer-events-none');
+            undoTimeout = setTimeout(hideSnackbar, 3500);
+        }
+
+        function hideSnackbar() {
+            const snackbar = document.getElementById('snackbar');
+            snackbar.classList.add('translate-y-20', 'opacity-0', 'pointer-events-none');
+        }
+
+        /* Theme Initialization */
+        function initTheme() {
+            const saved = localStorage.getItem('Shanhub_theme') || 'dark';
+            if (saved === 'dark') document.documentElement.classList.add('dark');
+            else document.documentElement.classList.remove('dark');
+        }
+
+        function toggleTheme() {
+            if (document.documentElement.classList.contains('dark')) {
+                document.documentElement.classList.remove('dark');
+                localStorage.setItem('Shanhub_theme', 'light');
+            } else {
+                document.documentElement.classList.add('dark');
+                localStorage.setItem('Shanhub_theme', 'dark');
+            }
+        }
+
+        function escapeHTML(str) {
+            return String(str).replace(/[&<>'"]/g, 
+                tag => ({
+                    '&': '&amp;',
+                    '<': '&lt;',
+                    '>': '&gt;',
+                    "'": '&#39;',
+                    '"': '&quot;'
+                }[tag] || tag)
+            );
+        }
+    </script>
+</body>
+</html>
